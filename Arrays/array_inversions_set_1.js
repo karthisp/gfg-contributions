@@ -1,41 +1,53 @@
-let arr = [1, 20, 6, 4, 5];
-let count = 0;
+// Implementing 
 
-
-function mergeSort(arr){
-  if(arr.length === 1) return arr;
-  let midPt = Math.floor(arr.length/2);
-  let left = mergeSort(arr.slice(0, midPt));
-  let right = mergeSort(arr.slice(midPt));
-  return merge(left, right, midPt)
+function mergeSort(arr, array_size) {
+    let temp = new Array(array_size);
+    return _mergeSort(arr, temp, 0, array_size - 1)
 }
 
-function merge(left, right, mid){
-  let i=0, j=0;
-  let arr = [];
-  while(i<left.length && j<right.length){
-    if(left[i] < right[j]){
-      arr.push(left[i]);
-      i++;
-    } else {
-      count+= mid - i
-      arr.push(right[j]);
-      j++
+function _mergeSort(arr, temp, left, right) {
+    let mid, inv_count = 0;
+    if (right > left) {
+        mid = Math.floor((right + left) / 2);
+        inv_count += _mergeSort(arr, temp, left, mid);
+        inv_count += _mergeSort(arr, temp, mid + 1, right);
+
+        inv_count += merge(arr, temp, left, mid + 1, right);
     }
-  }
-
-  while(i < left.length){
-    arr.push(left[i++])
-  }
-
-  while(j < right.length){
-    arr.push(right[j++])
-  }
-
-  
-    return arr;
+    return inv_count;
 }
 
-mergeSort(arr);
+function merge(arr, temp, left, mid, right) {
+    let i, j, k;
+    let inv_count = 0;
 
-// console.log(count)
+    i = left;
+    j = mid;
+    k = left;
+
+    while ((i < mid) && j <= right) {
+        if (arr[i] <= arr[j]) {
+            temp[k++] = arr[i++];
+        } else {
+            temp[k++] = arr[j++];
+            inv_count = inv_count + (mid - i);
+        }
+    }
+
+    while (i <= mid - 1){
+        temp[k++] = arr[i++];
+    }
+
+    while (j <= right){
+        temp[k++] = arr[j++];
+    }
+
+    for (i = left; i <= right; i++){
+        arr[i] = temp[i];
+    }
+    
+    return inv_count;
+}
+
+let arr = [1, 20, 6, 4, 5];
+console.log(mergeSort(arr, arr.length))
